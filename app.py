@@ -118,6 +118,7 @@ def main():
                 "geom_join": "",
                 "description": "",
                 "has_biomass": False,
+                "has_county_geoid": False,
                 "value_columns": [],
                 "category_columns": [],
                 "details_columns": [],
@@ -155,6 +156,11 @@ def main():
         st.session_state.metadata["geom_join"] = st.text_input("Geometry Join", st.session_state.metadata["geom_join"])
         st.session_state.metadata["description"] = st.text_area("Description", st.session_state.metadata["description"])
         st.session_state.metadata["has_biomass"] = st.checkbox("Has Biomass", st.session_state.metadata["has_biomass"])
+        
+        try:
+            st.session_state.metadata["has_county_geoid"] = st.checkbox("Has County Geoid", st.session_state.metadata["has_county_geoid"])
+        except:
+            st.session_state.metadata["has_county_geoid"] = False
 
         st.subheader("Columns")
 
