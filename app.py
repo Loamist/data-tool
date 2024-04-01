@@ -123,7 +123,8 @@ def main():
                 "category_columns": [],
                 "details_columns": [],
                 "data_columns": [],
-                "tooltip": [],
+                "tooltip-title": [],
+                "tooltip-content": "",
                 "s3_file_path": "",
                 "view_name": "",
                 "updated_at": "",
@@ -154,13 +155,18 @@ def main():
         st.session_state.metadata["layer_id"] = st.text_input("Layer Id", st.session_state.metadata["layer_id"])
         st.session_state.metadata["geom_type"] = st.text_input("Geometry Type", st.session_state.metadata["geom_type"])
         st.session_state.metadata["geom_join"] = st.text_input("Geometry Join", st.session_state.metadata["geom_join"])
-        st.session_state.metadata["description"] = st.text_area("Description", st.session_state.metadata["description"])
+
+        try:        
+            st.session_state.metadata["obj_details_column"] = st.multiselect("obj_details_column (eg, Geoid)", all_columns, st.session_state.metadata["obj_details_column"])
+        except:
+            st.session_state.metadata["obj_details_column"] = st.multiselect("obj_details_column (eg, Geoid)", all_columns)
+
         st.session_state.metadata["has_biomass"] = st.checkbox("Has Biomass", st.session_state.metadata["has_biomass"])
         
         try:
             st.session_state.metadata["has_county_geoid"] = st.checkbox("Has County Geoid", st.session_state.metadata["has_county_geoid"])
         except:
-            st.session_state.metadata["has_county_geoid"] = False
+            st.session_state.metadata["has_county_geoid"] = st.checkbox("Has County Geoid")
 
         st.subheader("Columns")
 
@@ -173,12 +179,20 @@ def main():
         st.table(dfData[st.session_state.metadata["details_columns"]].head(5))
         st.session_state.metadata["data_columns"] = st.multiselect("Data Columns", all_columns, st.session_state.metadata["data_columns"])
         st.table(dfData[st.session_state.metadata["data_columns"]].head(5))
+        
         try:
-            st.session_state.metadata["tooltip"] = st.multiselect("Tooltip Columns", all_columns, st.session_state.metadata["tooltip"])
-        except:
-            st.session_state.metadata["tooltip"] = st.multiselect("Tooltip Columns", all_columns)
+            st.session_state.metadata["tooltip-title"] = st.multiselect("tooltip-title", all_columns, st.session_state.metadata["tooltip"])
 
-        st.table(dfData[st.session_state.metadata["tooltip"]].head(5))
+        except:
+            st.session_state.metadata["tooltip-title"] = st.multiselect("tooltip-title", all_columns)
+
+        try:
+            st.session_state.metadata["tooltip-content"] = st.text_area("tooltip-content (eg, {{Geoid}})", st.session_state.metadata["tooltip-content"])
+        except:
+            st.session_state.metadata["tooltip-content"] = st.text_area("tooltip-content (eg, {{Geoid}})")
+
+
+        st.table(dfData[st.session_state.metadata["tooltip-title"]].head(5))
         st.subheader("Other Information")
         st.session_state.metadata["s3_file_path"] = st.text_input("S3 File Path", st.session_state.metadata["s3_file_path"])
         st.session_state.metadata["view_name"] = st.text_input("View Name", st.session_state.metadata["view_name"])
@@ -192,7 +206,7 @@ def main():
             st.session_state.metadata["category_columns"] +
             st.session_state.metadata["details_columns"] +
             st.session_state.metadata["data_columns"] +
-            st.session_state.metadata["tooltip"]
+            st.session_state.metadata["tooltip-title"]
         )
     
         # geom should never be included in columns
