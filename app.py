@@ -78,9 +78,7 @@ def read_metadata(bucket, key):
     json_text = response['Body'].read().decode('utf-8')
     return json.loads(json_text)
 
-def upload_json_to_s3(data, bucket, key):
-    s3 = boto3.client('s3')
-    
+def upload_json_to_s3(s3,data, bucket, key):    
     # Convert the Python dictionary to a JSON string
     json_string = json.dumps(data, ensure_ascii=False, indent=4)
     
@@ -100,14 +98,28 @@ def main():
     if input_file is not None:
         # Load existing metadata if available
         # metadata_file = r"C:\Users\fasiu\OneDrive\Documents\GitHub\data-layer\Datasets\Processed\Final\\"+name.split('.')[0]+"_metadata.json"
+        
+        # Get input data columns
+        input_data = stream_json_file(s3,bucket_name, input_file)
+        input_data = convert_to_dataframe(input_data)
+        all_columns = input_data.columns.tolist()
+
         try:
             metadata_file = read_metadata(bucket_name, 'metadata/' + name.split('.')[0]+"_metadata.json")
         except:
+            # file = st.selectbox("Select a metadata file", list_files_in_folder(bucket_name, 'metadata/'))
+            # metadata_file = read_metadata(bucket_name, file)
+            # input_columns = set(all_columns)
+            # metadata_file["has_biomass"] = False
+            # metadata_file["has_county_geoid"] = False
+            # metadata_file["value_columns"] = [col for col in metadata_file["value_columns"] if col in input_columns]
+            # metadata_file["category_columns"] = [col for col in metadata_file["category_columns"] if col in input_columns]
+            # metadata_file["details_columns"] = [col for col in metadata_file["details_columns"] if col in input_columns]
+            # metadata_file["data_columns"] = [col for col in metadata_file["data_columns"] if col in input_columns]
+            # metadata_file["columns"] = [col for col in metadata_file["columns"] if col in input_columns]
             metadata_file = None
 
-        # if os.path.exists(metadata_file):
-        #     with open(metadata_file, "r") as f:
-        #         st.session_state.metadata = json.load(f)
+
         if metadata_file is not None:
             st.session_state.metadata = metadata_file
         else:
@@ -127,17 +139,11 @@ def main():
                 "tooltip-content": "",
                 "s3_file_path": "",
                 "view_name": "",
-                "updated_at": "",
+                "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S") ,
                 "detials_modals": [],
                 "columns": [],
                 "calculated_fields": []
             }
-
-        # Get input data columns
-        input_data = stream_json_file(s3,bucket_name, input_file)
-        input_data = convert_to_dataframe(input_data)
-        
-        all_columns = input_data.columns.tolist()
 
         # Remove geometry column from suggestions
         if "geometry" in all_columns:
@@ -155,6 +161,8 @@ def main():
         st.session_state.metadata["layer_id"] = st.text_input("Layer Id", st.session_state.metadata["layer_id"])
         st.session_state.metadata["geom_type"] = st.text_input("Geometry Type", st.session_state.metadata["geom_type"])
         st.session_state.metadata["geom_join"] = st.text_input("Geometry Join", st.session_state.metadata["geom_join"])
+        st.session_state.metadata["description"] = st.text_area("Layer description", st.session_state.metadata["description"])
+
 
         try:        
             st.session_state.metadata["obj_details_column"] = st.multiselect("obj_details_column (eg, Geoid)", all_columns, st.session_state.metadata["obj_details_column"])
@@ -181,18 +189,16 @@ def main():
         st.table(dfData[st.session_state.metadata["data_columns"]].head(5))
         
         try:
-            st.session_state.metadata["tooltip-title"] = st.multiselect("tooltip-title", all_columns, st.session_state.metadata["tooltip"])
+            st.session_state.metadata["tooltip-title"] = st.text_area("tooltip-title", st.session_state.metadata["tooltip-title"])
 
         except:
-            st.session_state.metadata["tooltip-title"] = st.multiselect("tooltip-title", all_columns)
+            st.session_state.metadata["tooltip-title"] = st.text_area("tooltip-title")
 
         try:
             st.session_state.metadata["tooltip-content"] = st.text_area("tooltip-content (eg, {{Geoid}})", st.session_state.metadata["tooltip-content"])
         except:
             st.session_state.metadata["tooltip-content"] = st.text_area("tooltip-content (eg, {{Geoid}})")
-
-
-        st.table(dfData[st.session_state.metadata["tooltip-title"]].head(5))
+        # st.table(dfData[st.session_state.metadata["tooltip-title"]].head(5))
         st.subheader("Other Information")
         st.session_state.metadata["s3_file_path"] = st.text_input("S3 File Path", st.session_state.metadata["s3_file_path"])
         st.session_state.metadata["view_name"] = st.text_input("View Name", st.session_state.metadata["view_name"])
@@ -205,8 +211,7 @@ def main():
             st.session_state.metadata["value_columns"] +
             st.session_state.metadata["category_columns"] +
             st.session_state.metadata["details_columns"] +
-            st.session_state.metadata["data_columns"] +
-            st.session_state.metadata["tooltip-title"]
+            st.session_state.metadata["data_columns"] 
         )
     
         # geom should never be included in columns
@@ -234,7 +239,7 @@ def main():
         st.session_state.metadata["data_columns"] = st.session_state.metadata["data_columns"] + ['geom']
         # Save metadata
         if st.button("Save Metadata"):
-            upload_json_to_s3(st.session_state.metadata, bucket_name, 'metadata/' + name.split('.')[0]+"_metadata.json")
+            upload_json_to_s3(s3,st.session_state.metadata, bucket_name, 'metadata/' + name.split('.')[0]+"_metadata.json")
     else:
         st.warning("Please upload an input data file to get started.")
 
