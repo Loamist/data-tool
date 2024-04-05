@@ -102,6 +102,7 @@ def main():
         # Get input data columns
         input_data = stream_json_file(s3,bucket_name, input_file)
         input_data = convert_to_dataframe(input_data)
+        st.table(input_data.head(5))
         all_columns = input_data.columns.tolist()
 
         try:
@@ -129,6 +130,7 @@ def main():
                 "geom_type": "",
                 "geom_join": "",
                 "description": "",
+                "obj_details_column": "",
                 "has_biomass": False,
                 "has_county_geoid": False,
                 "value_columns": [],
@@ -162,12 +164,7 @@ def main():
         st.session_state.metadata["geom_type"] = st.text_input("Geometry Type", st.session_state.metadata["geom_type"])
         st.session_state.metadata["geom_join"] = st.text_input("Geometry Join", st.session_state.metadata["geom_join"])
         st.session_state.metadata["description"] = st.text_area("Layer description", st.session_state.metadata["description"])
-
-
-        try:        
-            st.session_state.metadata["obj_details_column"] = st.multiselect("obj_details_column (eg, Geoid)", all_columns, st.session_state.metadata["obj_details_column"])
-        except:
-            st.session_state.metadata["obj_details_column"] = st.multiselect("obj_details_column (eg, Geoid)", all_columns)
+        st.session_state.metadata["obj_details_column"] = st.selectbox("obj_details_column (eg, Geoid)", ['id']+all_columns)
 
         st.session_state.metadata["has_biomass"] = st.checkbox("Has Biomass", st.session_state.metadata["has_biomass"])
         
@@ -183,6 +180,8 @@ def main():
         st.table(dfData[st.session_state.metadata["value_columns"]].head(5))
         st.session_state.metadata["category_columns"] = st.multiselect("Category Columns", all_columns, st.session_state.metadata["category_columns"])
         st.table(dfData[st.session_state.metadata["category_columns"]].head(5))
+        st.text(st.session_state.metadata["details_columns"])
+        st.text(all_columns)
         st.session_state.metadata["details_columns"] = st.multiselect("Details Columns", all_columns, st.session_state.metadata["details_columns"])
         st.table(dfData[st.session_state.metadata["details_columns"]].head(5))
         st.session_state.metadata["data_columns"] = st.multiselect("Data Columns", all_columns, st.session_state.metadata["data_columns"])
