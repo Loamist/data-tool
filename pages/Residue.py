@@ -1,14 +1,43 @@
 import streamlit as st
 import pandas as pd
 
-# st.set_page_config(
-#     page_title="Residue",
-#     page_icon="👋",
-# )
+import streamlit as st
+import os
+import boto3
+import json
+import pandas as pd
+import ijson
+from datetime import datetime, timezone
+from io import BytesIO,StringIO
+import pickle
 
-dfResidue = pd.read_csv("biomassData.csv")
-dfResidue.columns = [col.title().replace('_', ' ') for col in dfResidue.columns]
-dfResidue['Biomas Tons'] /= 1000  # Convert Biomass Tons to Thousands
+@st.cache_data
+def load_data(bucket, object_key, access_key, secret_key, region):
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        region_name=region
+    )
+    csv_buffer = BytesIO()
+    s3.download_fileobj(bucket, object_key, csv_buffer)
+    csv_buffer.seek(0)
+    df = pd.read_csv(csv_buffer)
+    df.columns = [col.title().replace('_', ' ') for col in df.columns]
+    df['Biomas Tons'] /= 1000  # Convert Biomass Tons to Thousands
+    return df
+
+
+bucket_name = 'dev-data-layer-datasets'
+object_key = 'dashboard/biomassData.csv'
+aws_access_key_id = st.secrets["Access_key_ID"]
+aws_default_region = st.secrets["AWS_DEFAULT_REGION"]
+aws_secret_access_key = st.text_input("Enter your AWS secret access key")
+# wait for user to input the secret key before proceeding
+if aws_secret_access_key == "":
+    st.stop()
+
+dfResidue = load_data(bucket_name, object_key, aws_access_key_id, aws_secret_access_key, aws_default_region)
 
 # Sidebar filtering functions
 def create_sidebar_filters(df):

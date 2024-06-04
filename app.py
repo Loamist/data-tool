@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 
 
 aws_access_key_id = st.secrets["Access_key_ID"]
-aws_secret_access_key = st.secrets["Secret_access_key"]
 aws_default_region = st.secrets["AWS_DEFAULT_REGION"]
 
 # get aws_secret_access_key from user input
