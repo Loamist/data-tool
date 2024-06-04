@@ -44,6 +44,7 @@ dfResidueSum = dfResidue.groupby(['State', 'Source'])['Biomas Tons'].sum().reset
 dfResidueSum = dfResidueSum.pivot(index='State', columns='Source', values='Biomas Tons').reset_index()
 # add a total row
 dfResidueSum.loc['Total'] = dfResidueSum.sum()
+dfResidueSum.loc['Total', 'State'] = 'Total'
 st.write("Total Residue",dfResidueSum)
 
 # Sidebar filtering functions
