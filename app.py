@@ -108,16 +108,16 @@ def main():
         try:
             metadata_file = read_metadata(bucket_name, 'metadata/' + name.split('.')[0]+"_metadata.json")
         except:
-            # file = st.selectbox("Select a metadata file", list_files_in_folder(bucket_name, 'metadata/'))
-            # metadata_file = read_metadata(bucket_name, file)
-            # input_columns = set(all_columns)
-            # metadata_file["has_biomass"] = False
-            # metadata_file["has_county_geoid"] = False
-            # metadata_file["value_columns"] = [col for col in metadata_file["value_columns"] if col in input_columns]
-            # metadata_file["category_columns"] = [col for col in metadata_file["category_columns"] if col in input_columns]
-            # metadata_file["details_columns"] = [col for col in metadata_file["details_columns"] if col in input_columns]
-            # metadata_file["data_columns"] = [col for col in metadata_file["data_columns"] if col in input_columns]
-            # metadata_file["columns"] = [col for col in metadata_file["columns"] if col in input_columns]
+        #     file = st.selectbox("Select a metadata file", list_files_in_folder(bucket_name, 'metadata/'))
+        #     metadata_file = read_metadata(bucket_name, file)
+        #     input_columns = set(all_columns)
+        #     metadata_file["has_biomass"] = False
+        #     metadata_file["has_county_geoid"] = False
+        #     metadata_file["value_columns"] = [col for col in metadata_file["value_columns"] if col in input_columns]
+        #     metadata_file["category_columns"] = [col for col in metadata_file["category_columns"] if col in input_columns]
+        #     metadata_file["details_columns"] = [col for col in metadata_file["details_columns"] if col in input_columns]
+        #     metadata_file["data_columns"] = [col for col in metadata_file["data_columns"] if col in input_columns]
+        #     metadata_file["columns"] = [col for col in metadata_file["columns"] if col in input_columns]
             metadata_file = None
 
 
@@ -182,6 +182,7 @@ def main():
         st.table(dfData[st.session_state.metadata["category_columns"]].head(5))
         st.text(st.session_state.metadata["details_columns"])
         st.text(all_columns)
+        st.text(st.session_state.metadata["details_columns"])
         st.session_state.metadata["details_columns"] = st.multiselect("Details Columns", all_columns, st.session_state.metadata["details_columns"])
         st.table(dfData[st.session_state.metadata["details_columns"]].head(5))
         st.session_state.metadata["data_columns"] = st.multiselect("Data Columns", all_columns, st.session_state.metadata["data_columns"])
