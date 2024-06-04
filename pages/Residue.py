@@ -39,6 +39,13 @@ if aws_secret_access_key == "":
 
 dfResidue = load_data(bucket_name, object_key, aws_access_key_id, aws_secret_access_key, aws_default_region)
 
+# I want State Rows and Source Columns and sum of Biomas Tons as Values
+dfResidueSum = dfResidue.groupby(['State', 'Source'])['Biomas Tons'].sum().reset_index()
+dfResidueSum = dfResidueSum.pivot(index='State', columns='Source', values='Biomas Tons').reset_index()
+# add a total row
+dfResidueSum.loc['Total'] = dfResidueSum.sum()
+st.write("Total Residue",dfResidueSum)
+
 # Sidebar filtering functions
 def create_sidebar_filters(df):
     source_options = df['Source'].unique()
