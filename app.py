@@ -143,15 +143,46 @@ def main():
                 "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S") ,
                 "detials_modals": [],
                 "columns": [],
-                "calculated_fields": []
+                "calculated_fields": [],
+                "human_identifier_field": "",
+                "mandatory_filter": []
             }
+
+
+        metadataFormat = {
+                "name": "",
+                "layer_id": "",
+                "geom_type": "",
+                "geom_join": "",
+                "description": "",
+                "obj_details_column": "",
+                "has_biomass": False,
+                "has_county_geoid": False,
+                "value_columns": [],
+                "category_columns": [],
+                "details_columns": [],
+                "data_columns": [],
+                "tooltip-title": [],
+                "tooltip-content": "",
+                "s3_file_path": "",
+                "view_name": "",
+                "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S") ,
+                "detials_modals": [],
+                "columns": [],
+                "calculated_fields": [],
+                "human_identifier_field": "",
+                "mandatory_filter": []
+            }
+        
+        # Remove all keys in metadata that are not in metadataFormat
+        st.session_state.metadata = {k: v for k, v in st.session_state.metadata.items() if k in metadataFormat}
 
         # Remove geometry column from suggestions
         if "geometry" in all_columns:
             all_columns.remove("geometry")
 
         if "geom" in all_columns:
-            all_columns.remove("geom")
+            all_columns.remove("geom")  
 
         # st.session_state.metadata["data_columns"] remove geom from data columns
         st.session_state.metadata["data_columns"] = [col for col in st.session_state.metadata["data_columns"] if col != "geom"]
@@ -174,6 +205,10 @@ def main():
 
         st.subheader("Columns")
 
+        # if county geoid is present then add state_name to all columns
+        if st.session_state.metadata["has_county_geoid"]:
+            all_columns.append("state_name")
+
         dfData = pd.DataFrame(input_data)
         st.session_state.metadata["value_columns"] = st.multiselect("Value Columns", all_columns, st.session_state.metadata["value_columns"])
         st.table(dfData[st.session_state.metadata["value_columns"]].head(5))
@@ -183,9 +218,9 @@ def main():
         st.text(all_columns)
         st.text(st.session_state.metadata["details_columns"])
         st.session_state.metadata["details_columns"] = st.multiselect("Details Columns", all_columns, st.session_state.metadata["details_columns"])
-        st.table(dfData[st.session_state.metadata["details_columns"]].head(5))
+        # st.table(dfData[st.session_state.metadata["details_columns"]].head(5))
         st.session_state.metadata["data_columns"] = st.multiselect("Data Columns", all_columns, st.session_state.metadata["data_columns"])
-        st.table(dfData[st.session_state.metadata["data_columns"]].head(5))
+        # st.table(dfData[st.session_state.metadata["data_columns"]].head(5))
         
         try:
             st.session_state.metadata["tooltip-title"] = st.text_area("tooltip-title", st.session_state.metadata["tooltip-title"])
@@ -203,6 +238,16 @@ def main():
         st.session_state.metadata["view_name"] = st.text_input("View Name", st.session_state.metadata["view_name"])
         # add time in utc
         st.session_state.metadata["updated_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S") 
+
+        try:
+            st.session_state.metadata["human_identifier_field"] = st.text_input("Human Identifier", st.session_state.metadata["human_identifier_field"])
+        except:
+            st.session_state.metadata["human_identifier_field"] = st.text_input("Human Identifier")
+
+        try:
+            st.session_state.metadata["mandatory_filter"] = st.multiselect("Mandatory Filter", all_columns, st.session_state.metadata["mandatory_filter"])
+        except:
+            st.session_state.metadata["mandatory_filter"] = st.multiselect("Mandatory Filter", all_columns)
 
         # Render columns
         st.subheader("Columns Details")
