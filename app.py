@@ -249,6 +249,16 @@ def main():
         except:
             st.session_state.metadata["mandatory_filter"] = st.multiselect("Mandatory Filter", all_columns)
 
+        # add a new field called layer_access_level input must be a number
+        # if the input is not a number then it should be empty
+        # if its value is 0 it will be accessable to free users and all others.
+        # if its value is 1 it will be accessable to freemium users and premium users.
+        # it its value is 2 it will be accessable to premium users only.
+        st.text("Layer Access Level 0: Free Users, 1: Freemium Users, 2: Premium Users")
+        try:
+            st.session_state.metadata["layer_access_level"] = st.text_input("Layer Access Level", st.session_state.metadata["layer_access_level"])
+        except:
+            st.session_state.metadata["layer_access_level"] = st.text_input("Layer Access Level")
         # Render columns
         st.subheader("Columns Details")
         selected_columns = set(
