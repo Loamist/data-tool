@@ -82,5 +82,13 @@ def read_metadata(bucket, key):
 
 # get values from all the metadata files of the selected key
 values = [read_metadata(bucket_name, file)[selected_key] for file in json_files]
-# show al the values wiith the json  file names
-st.write(values)
+
+# Create a dictionary with the json file names as keys and the values as values
+values = dict(zip(json_files, values))
+
+# Display the values
+
+for key, value in values.items():
+    st.write(f"**{key}**")
+    st.write(value)
+    st.write('---')
