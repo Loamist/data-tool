@@ -256,9 +256,9 @@ def main():
         # it its value is 2 it will be accessable to premium users only.
         st.text("Layer Access Level 0: Free Users, 1: Freemium Users, 2: Premium Users")
         try:
-            st.session_state.metadata["layer_access_level"] = st.text_input("Layer Access Level", st.session_state.metadata["layer_access_level"])
+            st.session_state.metadata["layer_access_level"] = int(st.text_input("Layer Access Level", st.session_state.metadata["layer_access_level"]))
         except:
-            st.session_state.metadata["layer_access_level"] = st.text_input("Layer Access Level")
+            st.session_state.metadata["layer_access_level"] = int(st.text_input("Layer Access Level"))
         # Render columns
         st.subheader("Columns Details")
         selected_columns = set(
