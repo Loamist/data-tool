@@ -42,7 +42,7 @@ def list_files_in_folder(bucket, prefix):
 
 folder_prefix = 'datasets/'
 files = list_files_in_folder(bucket_name, folder_prefix)
-json_files = [file for file in files if file.endswith('json') and file.count('/') == 1]
+json_files = [file.lower() for file in files if file.endswith('json') and file.count('/') == 1]
 
 
 def stream_json_file(s3,bucket, key, limit=1000):
@@ -105,7 +105,7 @@ def main():
         all_columns = input_data.columns.tolist()
 
         try:
-            metadata_file = read_metadata(bucket_name, 'metadata/' + name.split('.')[0]+"_metadata.json")
+            metadata_file = read_metadata(bucket_name, 'metadata/' + name.split('.')[0].lower()+"_metadata.json")
         except:
         #     file = st.selectbox("Select a metadata file", list_files_in_folder(bucket_name, 'metadata/'))
         #     metadata_file = read_metadata(bucket_name, file)
@@ -145,7 +145,8 @@ def main():
                 "columns": [],
                 "calculated_fields": [],
                 "human_identifier_field": "",
-                "mandatory_filter": []
+                "mandatory_filter": [],
+                "layer_access_level":2
             }
 
 
@@ -171,7 +172,8 @@ def main():
                 "columns": [],
                 "calculated_fields": [],
                 "human_identifier_field": "",
-                "mandatory_filter": []
+                "mandatory_filter": [],
+                'layer_access_level':2
             }
         
         # Remove all keys in metadata that are not in metadataFormat
@@ -258,7 +260,7 @@ def main():
         try:
             st.session_state.metadata["layer_access_level"] = int(st.text_input("Layer Access Level", st.session_state.metadata["layer_access_level"]))
         except:
-            st.session_state.metadata["layer_access_level"] = int(st.text_input("Layer Access Level"))
+            st.session_state.metadata["layer_access_level"] = int(st.text_input("Layer Access Level"),2)
         # Render columns
         st.subheader("Columns Details")
         selected_columns = set(
