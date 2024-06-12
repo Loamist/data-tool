@@ -42,7 +42,7 @@ def list_files_in_folder(bucket, prefix):
 
 folder_prefix = 'datasets/'
 files = list_files_in_folder(bucket_name, folder_prefix)
-json_files = [file.lower() for file in files if file.endswith('json') and file.count('/') == 1]
+json_files = [file for file in files if file.endswith('json') and file.count('/') == 1]
 
 
 def stream_json_file(s3,bucket, key, limit=1000):
@@ -104,8 +104,19 @@ def main():
         st.table(input_data.head(5))
         all_columns = input_data.columns.tolist()
 
+        check = 0
         try:
-            metadata_file = read_metadata(bucket_name, 'metadata/' + name.split('.')[0].lower()+"_metadata.json")
+            files_metadata = list_files_in_folder(bucket_name, 'metadata/')
+            
+            for f in files_metadata:
+                if name.split('.')[0].lower() in f.lower():
+                    metadata_file = read_metadata(bucket_name, f)
+                    check = 1
+                    break
+            if check == 0:
+                # Adding exception to handle the case where the metadata file is not found
+                asdfasdfdsdf
+
         except:
         #     file = st.selectbox("Select a metadata file", list_files_in_folder(bucket_name, 'metadata/'))
         #     metadata_file = read_metadata(bucket_name, file)
