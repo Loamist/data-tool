@@ -157,7 +157,8 @@ def main():
                 "calculated_fields": [],
                 "human_identifier_field": "",
                 "mandatory_filter": [],
-                "layer_access_level":2
+                "layer_access_level":2,
+                "supplier_layer": ""
             }
 
 
@@ -184,7 +185,8 @@ def main():
                 "calculated_fields": [],
                 "human_identifier_field": "",
                 "mandatory_filter": [],
-                'layer_access_level':2
+                'layer_access_level':2,
+                "supplier_layer": ""
             }
         
         # Remove all keys in metadata that are not in metadataFormat
@@ -272,6 +274,14 @@ def main():
             st.session_state.metadata["layer_access_level"] = int(st.text_input("Layer Access Level", st.session_state.metadata["layer_access_level"]))
         except:
             st.session_state.metadata["layer_access_level"] = int(st.text_input("Layer Access Level"),2)
+
+        # add a new field called supplier_layer input can be true or empty
+        # if the input is true then it will be a supplier layer
+        try:
+            st.session_state.metadata["supplier_layer"] = st.checkbox("Supplier Layer", value=st.session_state.metadata["supplier_layer"])
+        except:
+            st.session_state.metadata["supplier_layer"] = st.checkbox("Supplier Layer")
+
         # Render columns
         st.subheader("Columns Details")
         selected_columns = set(
