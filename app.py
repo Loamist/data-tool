@@ -280,7 +280,7 @@ def main():
         try:
             st.session_state.metadata["supplier_layer"] = st.checkbox("Supplier Layer", value=st.session_state.metadata["supplier_layer"])
         except:
-            st.session_state.metadata["supplier_layer"] = st.checkbox("Supplier Layer")
+            st.session_state.metadata["supplier_layer"] = st.checkbox("Supplier Layer",value=False)
 
         # Render columns
         st.subheader("Columns Details")

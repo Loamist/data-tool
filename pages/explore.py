@@ -67,7 +67,8 @@ metadataFormat =  {
             "detials_modals": [],
             "columns": [],
             "calculated_fields": [],
-            "layer_access_level": ''
+            "layer_access_level": '',
+            "supplier_layer": ""
         }
 
 keys = list(metadataFormat.keys())
