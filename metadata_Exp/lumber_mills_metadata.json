@@ -1,0 +1,93 @@
+{
+    "name": "Lumber Mills",
+    "layer_id": "lumber_mills",
+    "geom_type": "point",
+    "geom_join": "",
+    "description": "Lumber Mills ",
+    "has_biomass": false,
+    "value_columns": [
+        "residue_bdt"
+    ],
+    "category_columns": [],
+    "details_columns": [
+        "mill_name",
+        "status",
+        "residue_bdt",
+        "city",
+        "country"
+    ],
+    "data_columns": [
+        "mill_name",
+        "status",
+        "residue_bdt",
+        "city",
+        "country",
+        "geom"
+    ],
+    "s3_file_path": "datasets/lumber_mills.json",
+    "view_name": "lumber_mills_view",
+    "updated_at": "2024-09-16 19:42:58",
+    "detials_modals": [],
+    "columns": [
+        {
+            "name": "residue_bdt",
+            "label": "Residue (BDT)",
+            "type": "float",
+            "description": "Total Residue (Sawdust/Wood Chips/Bark) Generated at this Mill in Bone Dry Tons (BDT)"
+        },
+        {
+            "name": "status",
+            "label": "Status",
+            "type": "text",
+            "description": "Running Status of the Mill"
+        },
+        {
+            "name": "city",
+            "label": "City",
+            "type": "text",
+            "description": "City"
+        },
+        {
+            "name": "country",
+            "label": "country",
+            "type": "text",
+            "description": "Country"
+        },
+        {
+            "name": "mill_name",
+            "label": "Mill Name",
+            "type": "text",
+            "description": "Name of the Mill"
+        }
+    ],
+    "calculated_fields": [],
+    "has_county_geoid": false,
+    "obj_details_column": "id",
+    "tooltip-title": "Lumber Mill",
+    "tooltip-content": "Mill Name: {{mill_name}}\nStatus: {{status}} \nResidue: {{residue_bdt}} BDT\n",
+    "layer_access_level": 2,
+    "mandatory_filter": [],
+    "human_identifier_field": "",
+    "supplier_layer": true,
+    "supplier_highlights": {
+        "Residue Type": "Woody",
+        "Residue Quantity": "{{residue_bdt}} Tons"
+    },
+
+    "visualization" : { "heatmap" :{
+  "property": "residue_bdt",
+  "weight_max": 356850,
+  "weight_min": 0,
+  "color_by_value": {
+    "0": "#33a02c",
+    "0.2": "#1f78b4",
+    "0.4": "#a6cee3",
+    "0.6": "#fb9a99",
+    "0.8": "#e31a1c",
+    "1": "#ff7f00"
+  },
+  "radius_min": 10,
+  "radius_max": 50
+},"cluster_disabled": true
+}
+}

@@ -1,3 +1,10 @@
 env
 .streamlit
 Test.ipynb
+
+# Ignore specific files in the pages directory
+pages/criteria_ai.py
+pages/criteria.py
+pages/mca.py
+
+scenarios.json
